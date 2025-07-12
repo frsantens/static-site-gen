@@ -11,7 +11,6 @@ def text_to_children(text):
 def markdown_to_html_node(markdown):
     blocks = markdown_to_blocks(markdown)
     parent_html_node = ParentNode("div", [])
-
     for block in blocks:
         block_type = block_to_block_type(block)
         if block_type == BlockType.HEADING:
@@ -50,7 +49,6 @@ def markdown_to_html_node(markdown):
             parent_html_node.children.append(node)
 
     return parent_html_node
-
 
 def markdown_to_blocks(markdown):
     if not isinstance(markdown, str):
@@ -124,3 +122,18 @@ def block_to_block_type(block):
 
     # Paragraph
     return BlockType.PARAGRAPH
+
+def extract_title(markdown):
+    pattern = r"^(#{1}) (.*)"
+    blocks = markdown_to_blocks(markdown)
+    
+    if markdown.startswith(pattern):
+        return markdown.split("\n\n")[0].strip()
+    else:
+
+        for block in blocks:
+            if block_to_block_type(block) == BlockType and block[0].startswith(pattern):
+                return block[0].strip('#').strip()
+            else:
+                raise Exception("no h1 header found")
+        

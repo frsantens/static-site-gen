@@ -10,10 +10,14 @@ def main(argv=None):
     #     verbose = True
     #     copy_from_to(src='./static', dst='./public', verbose=False)
     # else:
-    src = './static'
-    dst = './public'
-    verbose = False
-    copy_from_to(src, dst, verbose)
+    
+    
+    # src = './static'
+    # dst = './public'
+    # verbose = False
+    # copy_from_to(src, dst, verbose)
+    
+    
 
 
 if __name__ == "__main__":

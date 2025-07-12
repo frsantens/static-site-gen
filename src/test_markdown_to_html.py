@@ -193,3 +193,11 @@ Remember to buy everything!
             html,
             "<div><h3>Shopping</h3><ul><li>Eggs</li><li>Milk</li></ul><p>Remember to buy everything!</p></div>",
         )
+        
+class TestExtractTitle(unittest.TestCase):
+    def test_simple(self):
+        md = '# Hello'
+        temp = extract_title(md)
+        expected = 'Hello'
+        print('hmmmm...')
+        self.assertEqual(temp, expected)
