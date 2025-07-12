@@ -178,3 +178,18 @@ the **same** even with inline stuff
             html,
             "<div><pre><code>This is text that _should_ remain\nthe **same** even with inline stuff\n</code></pre></div>",
         )
+        
+    def test_mixed_blocks(self):
+        md= """
+### Shopping
+- Eggs
+- Milk
+
+Remember to buy everything!
+"""
+        node = markdown_to_html_node(md)
+        html = node.to_html()
+        self.assertEqual(
+            html,
+            "<div><h3>Shopping</h3><ul><li>Eggs</li><li>Milk</li></ul><p>Remember to buy everything!</p></div>",
+        )

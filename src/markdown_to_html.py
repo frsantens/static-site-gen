@@ -1,12 +1,10 @@
 from htmlnode import ParentNode, LeafNode
 from mdblocks import BlockType
 from textnode import TextNode, TextType
-from inline_markdown import text_node_to_html_node
+from inline_markdown import text_node_to_html_node, text_to_textnodes
 import re
 
 def text_to_children(text):
-    from textnode import text_to_textnodes
-    from inline_markdown import text_node_to_html_node
     textnodes = text_to_textnodes(text)
     return [text_node_to_html_node(node) for node in textnodes]
 
@@ -63,6 +61,7 @@ def markdown_to_blocks(markdown):
     in_code_block = False
 
     for line in lines:
+        is_heading = re.match(r"^#{1,6} ", line.strip())
         if line.strip().startswith("```"):
             if in_code_block:
                 current_block.append(line)
@@ -81,6 +80,13 @@ def markdown_to_blocks(markdown):
             if current_block:
                 blocks.append('\n'.join(current_block).strip())
                 current_block = []
+        elif is_heading:
+            if current_block:
+                blocks.append('\n'.join(current_block).strip())
+                current_block = []
+            current_block.append(line)
+            blocks.append('\n'.join(current_block).strip())
+            current_block = []
         else:
             current_block.append(line)
     if current_block:
