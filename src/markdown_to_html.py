@@ -1,8 +1,9 @@
-from htmlnode import ParentNode, LeafNode
-from mdblocks import BlockType
+from htmlnode import ParentNode
+from class_blocktype import BlockType
 from textnode import TextNode, TextType
 from inline_markdown import text_node_to_html_node, text_to_textnodes
 import re
+import os
 
 def text_to_children(text):
     textnodes = text_to_textnodes(text)
@@ -47,7 +48,6 @@ def markdown_to_html_node(markdown):
             children = text_to_children(block.replace('\n', ' '))
             node = ParentNode("p", children)
             parent_html_node.children.append(node)
-
     return parent_html_node
 
 def markdown_to_blocks(markdown):
@@ -124,16 +124,28 @@ def block_to_block_type(block):
     return BlockType.PARAGRAPH
 
 def extract_title(markdown):
-    pattern = r"^(#{1}) (.*)"
+    pattern = r"^# (.*)"
     blocks = markdown_to_blocks(markdown)
-    
-    if markdown.startswith(pattern):
-        return markdown.split("\n\n")[0].strip()
-    else:
+    for block in blocks:
+        if block_to_block_type(block) == BlockType.HEADING and block.startswith('# '):
+            match = re.match(r"^# (.*)", block)
+            if match:
+                return match.group(1).strip()
+    raise Exception("no h1 header found")
 
-        for block in blocks:
-            if block_to_block_type(block) == BlockType and block[0].startswith(pattern):
-                return block[0].strip('#').strip()
-            else:
-                raise Exception("no h1 header found")
-        
+def generate_page(from_path, template_path, dest_path):
+    print(f'Generating page from {from_path} to {dest_path} using {template_path}')
+    with open(from_path, encoding="utf_8") as f:
+        markdown = f.read()
+    with open(template_path, encoding="utf_8") as f:
+        template = f.read()
+    parent_node = markdown_to_html_node(markdown).to_html()
+    title = extract_title(markdown)
+    full_page = template.replace( '{{ Title }}', title ).replace( '{{ Content }}', parent_node)
+    if not os.path.exists(os.path.dirname(dest_path)):
+        os.makedirs(os.path.dirname(dest_path))
+    with open(os.path.abspath(dest_path), "w") as f:
+        f.write(full_page)
+
+    
+    

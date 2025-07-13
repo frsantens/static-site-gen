@@ -1,7 +1,5 @@
-from genericpath import isfile
 import os
 import shutil
-from tabnanny import verbose
 
 def copy_from_to(dir_src, dir_dest, verbose):
     if not os.path.isdir(dir_src):
@@ -17,7 +15,7 @@ def copy_from_to(dir_src, dir_dest, verbose):
     os.mkdir(abs_dest)
     
     copy_recursive(abs_src, abs_dest, verbose)
-    
+
 def copy_recursive(src, dest, verbose):
     entries_list = os.listdir(src)
     if verbose:

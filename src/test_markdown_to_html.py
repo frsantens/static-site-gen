@@ -1,6 +1,6 @@
 import unittest
 from markdown_to_html import *
-from mdblocks import BlockType
+from class_blocktype import BlockType
 
 
 class TestMarkdownToBlocks(unittest.TestCase):
@@ -201,3 +201,25 @@ class TestExtractTitle(unittest.TestCase):
         expected = 'Hello'
         print('hmmmm...')
         self.assertEqual(temp, expected)
+
+    def test_no_h1_header(self):
+        md = '## Not an H1\nSome text here.'
+        with self.assertRaises(Exception):
+            extract_title(md)
+
+    def test_h1_with_leading_trailing_whitespace(self):
+        md = '   #   Hello World   '
+        self.assertEqual(extract_title(md.strip()), 'Hello World')
+
+    def test_multiple_h1_headers(self):
+        md = '# First Title\nSome text\n# Second Title'
+        self.assertEqual(extract_title(md), 'First Title')
+
+    def test_h1_after_paragraph(self):
+        md = 'Some intro text.\n\n# Real Title\nMore text.'
+        self.assertEqual(extract_title(md), 'Real Title')
+
+    def test_h1_with_special_characters(self):
+        print('ok ok')
+        md = '# Hello, World! @2025'
+        self.assertEqual(extract_title(md), 'Hello, World! @2025')
