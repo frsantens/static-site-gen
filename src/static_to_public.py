@@ -8,11 +8,8 @@ def copy_from_to(dir_src, dir_dest, verbose):
         raise Exception('source directory does not exist')
     abs_src = os.path.abspath(dir_src)
     abs_dest = os.path.abspath(dir_dest)
-    if os.path.exists(abs_dest):
-        shutil.rmtree(abs_dest)
-        if verbose:
-            print("STEP 1 removing", dir_dest, 'to remake it at', abs_dest, '\n')
-    os.mkdir(abs_dest)
+    if not os.path.exists(abs_dest):
+        os.mkdir(abs_dest)
     
     copy_recursive(abs_src, abs_dest, verbose)
 
