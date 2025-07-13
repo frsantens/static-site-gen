@@ -31,7 +31,7 @@ def copy_recursive(src, dest, verbose):
                 print(f"\ndoing recursive: copy_recursive({entr}, {dest_nested})")
             os.mkdir(dest_nested)
             copy_recursive(entr_path, dest_nested, verbose)
-        elif os.path.isfile(entr_path):
+        elif os.path.isfile(entr_path) and not entr.endswith('.md'):
             if verbose:
                 print(" filepath:", os.path.abspath(entr_path))
                 print(f"   -> coppying file {entr} to {dest}\n")

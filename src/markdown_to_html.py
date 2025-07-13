@@ -134,7 +134,7 @@ def extract_title(markdown):
                 return match.group(1).strip()
     raise Exception("no h1 header found")
 
-def generate_page(from_path, template_path, dest_path):
+def generate_page(from_path, template_path, dest_path, url_basepath):
     print(f'Generating page from {from_path} to {dest_path} using {template_path}')
     with open(from_path, encoding="utf_8") as f:
         markdown = f.read()
@@ -142,7 +142,10 @@ def generate_page(from_path, template_path, dest_path):
         template = f.read()
     parent_node = markdown_to_html_node(markdown).to_html()
     title = extract_title(markdown)
+    
     full_page = template.replace( '{{ Title }}', title ).replace( '{{ Content }}', parent_node)
+    full_page = full_page.replace('href="/', f'href="{url_basepath}').replace('src="/', f'src="{url_basepath}')
+    
     if not os.path.exists(os.path.dirname(dest_path)):
         os.makedirs(os.path.dirname(dest_path))
     if os.path.isfile(os.path.abspath(from_path)):
@@ -150,22 +153,22 @@ def generate_page(from_path, template_path, dest_path):
             f.write(full_page)
 
     
-def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
+def generate_pages_recursive(dir_path_content, template_path, dest_dir_path, url_basepath):
     if os.path.isdir(dir_path_content):
         rel_src_paths = os.listdir(dir_path_content)
     else:
         rel_src_paths = [dir_path_content]
+        
     for src in rel_src_paths:
         if  dir_path_content != src:
             abs_src = os.path.join(dir_path_content,src)
         else: abs_src = src
         nested_dest_dir = os.path.join(dest_dir_path,src.replace(".md",".html"))
-        print('nested destination path (should be .html) : ', nested_dest_dir)
-        
         if os.path.isfile(abs_src) and abs_src.endswith('.md'):
-            generate_page(abs_src, template_path, nested_dest_dir)
+            print("\nrecurse calls for generate_page(", abs_src, ", to", nested_dest_dir)
+            generate_page(abs_src, template_path, nested_dest_dir, url_basepath)
             continue
         elif os.path.isdir(abs_src):
-            generate_pages_recursive(abs_src, template_path, nested_dest_dir)
+            generate_pages_recursive(abs_src, template_path, nested_dest_dir, url_basepath)
             continue
     

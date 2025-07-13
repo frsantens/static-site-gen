@@ -1,19 +1,18 @@
 from static_to_public import copy_from_to
-from markdown_to_html import generate_page, generate_pages_recursive
+from markdown_to_html import generate_pages_recursive
 import os
+import sys
 
-def main():
-    src = './static'
-    dst = './public'
-    verbose = False
+def main(argv):
+    if len(argv) == 2:
+        basepath = argv[1]
+    else: basepath = '/'
+    src = './content'
+    dst = './docs'
+    verbose = True
     copy_from_to(src, dst, verbose)
-    generate_pages_recursive(os.path.abspath("./content/"), "template.html", dst)
-    # generate_page("content/index.md","template.html","public/index.html")
-    # generate_page("content/contact/index.md","template.html","public/contact/index.html")
-    # generate_page("content/blog/glorfindel/index.md","template.html","public/blog/glorfindel/index.html")
-    # generate_page("content/blog/majesty/index.md","template.html","public/blog/majesty/index.html")
-    # generate_page("content/blog/tom/index.md","template.html","public/blog/tom/index.html")
+    generate_pages_recursive(os.path.abspath(src), "template.html", dst, basepath)
 
 if __name__ == "__main__":
-    main()  # the argv[0] is the current filename.
+    main(sys.argv)  # the argv[0] is the current filename.
 
