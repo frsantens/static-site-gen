@@ -1,5 +1,6 @@
-from htmlnode import ParentNode
-from class_blocktype import BlockType
+from genericpath import isfile
+from pydoc import isdata
+from htmlnode import ParentNode, BlockType
 from textnode import TextNode, TextType
 from inline_markdown import text_node_to_html_node, text_to_textnodes
 import re
@@ -144,8 +145,27 @@ def generate_page(from_path, template_path, dest_path):
     full_page = template.replace( '{{ Title }}', title ).replace( '{{ Content }}', parent_node)
     if not os.path.exists(os.path.dirname(dest_path)):
         os.makedirs(os.path.dirname(dest_path))
-    with open(os.path.abspath(dest_path), "w") as f:
-        f.write(full_page)
+    if os.path.isfile(os.path.abspath(from_path)):
+        with open(os.path.abspath(dest_path), "w") as f:
+            f.write(full_page)
 
     
+def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
+    if os.path.isdir(dir_path_content):
+        rel_src_paths = os.listdir(dir_path_content)
+    else:
+        rel_src_paths = [dir_path_content]
+    for src in rel_src_paths:
+        if  dir_path_content != src:
+            abs_src = os.path.join(dir_path_content,src)
+        else: abs_src = src
+        nested_dest_dir = os.path.join(dest_dir_path,src.replace(".md",".html"))
+        print('nested destination path (should be .html) : ', nested_dest_dir)
+        
+        if os.path.isfile(abs_src) and abs_src.endswith('.md'):
+            generate_page(abs_src, template_path, nested_dest_dir)
+            continue
+        elif os.path.isdir(abs_src):
+            generate_pages_recursive(abs_src, template_path, nested_dest_dir)
+            continue
     
