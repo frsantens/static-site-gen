@@ -9,7 +9,7 @@ def main(argv):
     else: basepath = '/'
     src = './content'
     dst = './docs'
-    verbose = True
+    verbose = False
     copy_from_to(src, dst, verbose)
     generate_pages_recursive(os.path.abspath(src), "template.html", dst, basepath)
 
